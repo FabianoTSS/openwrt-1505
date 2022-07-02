@@ -294,7 +294,8 @@ get_status_led() {
 	tl-wr703n | \
 	tl-wr710n | \
 	tl-wr720n-v3 | \
-	tl-wr941nd-v6)
+	tl-wr941nd-v6 | \
+	tl-wr941hp-v2)
 		status_led="tp-link:blue:system"
 		;;
 	tl-wr841n-v9)

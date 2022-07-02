@@ -353,6 +353,15 @@ define Profile/TLWR941/Description
 endef
 $(eval $(call Profile,TLWR941))
 
+define Profile/TLWR941HP
+	NAME:=TP-LINK TL-WR941HP/V2
+	PACKAGES:=
+endef
+
+define Profile/TLWR941/Description
+	Package set optimized for the TP-LINK TL-WR941HP/V2.
+endef
+$(eval $(call Profile,TLWR941HP))
 
 define Profile/TLWR1041
 	NAME:=TP-LINK TL-WR1041N

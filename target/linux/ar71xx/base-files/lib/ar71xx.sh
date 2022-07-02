@@ -854,6 +854,12 @@ ar71xx_board_detect() {
 	*"Tube2H")
 		name="tube2h"
 		;;
+	*TL-WR941HP)
+		name="tl-wr941hp"
+		;;
+	*"TL-WR941HP v2")
+		name="tl-wr941hp-v2"
+		;;
 	*UniFi)
 		name="unifi"
 		;;
