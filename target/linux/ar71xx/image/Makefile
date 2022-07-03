@@ -739,6 +739,33 @@ define Device/oolite
 endef
 TARGET_DEVICES += oolite
 
+define Device/cpe510
+  $(Device/tplink)
+  DEVICE_TITLE := TP-LINK CPE510
+  DEVICE_PACKAGES := rssileds
+  MTDPARTS := spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
+  IMAGE_SIZE := 7680k
+  BOARDNAME := CPE510
+  TPLINK_BOARD_NAME := CPE510
+  DEVICE_PROFILE := CPE510
+  LOADER_TYPE := elf
+  KERNEL := kernel-bin | patch-cmdline | lzma | loader-kernel
+  IMAGES := sysupgrade.bin factory.bin
+  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
+  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
+endef
+TARGET_DEVICES += CPE510
+
+
+define Device/tl-wr941hp-v2
+    $(Device/tplink-8mlzma)
+    BOARDNAME := TL-WR941HP-v2
+    DEVICE_PROFILE := TLWR941HP
+    TPLINK_HWID := 0x09410007
+endef
+TARGET_DEVICES += tl-wr941hp-v2
+
+
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
 # $(1): rootfs type.
@@ -2074,24 +2101,6 @@ $(eval $(call SingleProfile,TPLINK,64kraw,TLWR1043V1,tl-wr1043nd-v1,TL-WR1043ND,
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR1043ND-v2,ttyS0,115200,0x10430002,1,8M))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V3,tl-wr1043nd-v3,TL-WR1043ND-v2,ttyS0,115200,0x10430003,1,8M))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
-
-define Device/cpe510
-  $(Device/tplink)
-  DEVICE_TITLE := TP-LINK CPE510/520
-  DEVICE_PACKAGES := rssileds
-  MTDPARTS := spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
-  IMAGE_SIZE := 7680k
-  BOARDNAME := CPE510
-  TPLINK_BOARD_NAME := CPE510
-  DEVICE_PROFILE := CPE510
-  LOADER_TYPE := elf
-  KERNEL := kernel-bin | patch-cmdline | lzma | loader-kernel
-  IMAGES := sysupgrade.bin factory.bin
-  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
-  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
-endef
-TARGET_DEVICES += CPE510
-
 $(eval $(call SingleProfile,UAPPRO,64k,UAPPRO,ubnt-uap-pro,UAP-PRO,ttyS0,115200,BZ,BZ,ar934x))
 $(eval $(call SingleProfile,UAPPRO,64k,UBNTUNIFIOUTDOORPLUS,ubnt-unifi-outdoor-plus,UBNT-UOP,ttyS0,115200,BZ,BZ,ar7240))
 
