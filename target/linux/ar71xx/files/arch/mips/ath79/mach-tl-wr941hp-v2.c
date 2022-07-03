@@ -1,5 +1,5 @@
 /*
- *  TP-LINK TL-WR941N/ND v6 board support
+ *  TP-LINK TL-WR941HP v2 board support
  *
  *  Copyright (C) 2015 Matthias Schiffer <mschiffer@universe-factory.net>
  *
@@ -107,13 +107,13 @@ static struct gpio_keys_button TL_WR941HP_V2_gpio_keys[] __initdata = {
 };
 
 
-static const char *tl_wr941n_v6_part_probes[] = {
+static const char *tl_wr941hp_v2_part_probes[] = {
 	"tp-link",
 	NULL,
 };
 
-static struct flash_platform_data tl_wr941n_v6_flash_data = {
-	.part_probes	= tl_wr941n_v6_part_probes,
+static struct flash_platform_data tl_wr941hp_v2_flash_data = {
+	.part_probes	= tl_wr941hp_v2_part_probes,
 };
 
 

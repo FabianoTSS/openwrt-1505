@@ -358,7 +358,7 @@ define Profile/TLWR941HP
 	PACKAGES:=
 endef
 
-define Profile/TLWR941/Description
+define Profile/TLWR941HP/Description
 	Package set optimized for the TP-LINK TL-WR941HP/V2.
 endef
 $(eval $(call Profile,TLWR941HP))
