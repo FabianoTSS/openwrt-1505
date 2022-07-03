@@ -739,7 +739,7 @@ define Device/oolite
 endef
 TARGET_DEVICES += oolite
 
-define Device/cpe510-520
+define Device/cpe510
   DEVICE_TITLE := TP-LINK CPE510/520
   DEVICE_PACKAGES := rssileds
   MTDPARTS := spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
@@ -755,7 +755,7 @@ define Device/cpe510-520
 endef
 
 define Device/cpe210-220
-$(Device/cpe510-520)
+$(Device/cpe510)
   DEVICE_TITLE := TP-LINK CPE210/220
   DEVICE_PACKAGES := rssileds
   BOARDNAME := CPE210
@@ -763,7 +763,7 @@ $(Device/cpe510-520)
 endef
 
 define Device/wbs210
-$(Device/cpe510-520)
+$(Device/cpe510)
   DEVICE_TITLE := TP-LINK WBS210
   DEVICE_PACKAGES := rssileds
   BOARDNAME := WBS210
@@ -771,13 +771,13 @@ $(Device/cpe510-520)
 endef
 
 define Device/wbs510
-$(Device/cpe510-520)
+$(Device/cpe510)
   DEVICE_TITLE := TP-LINK WBS510
   DEVICE_PACKAGES := rssileds
   BOARDNAME := WBS510
   TPLINK_BOARD_NAME := WBS510
 endef
-TARGET_DEVICES += cpe210-220 cpe510-520 wbs210 wbs51
+TARGET_DEVICES += cpe210-220 cpe510 wbs210 wbs51
 
 
 define Device/tl-wr941hp-v2
