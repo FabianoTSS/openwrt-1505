@@ -753,32 +753,7 @@ define Device/cpe510
   IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
   IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
 endef
-
-define Device/cpe210-220
-$(Device/cpe510)
-  DEVICE_TITLE := TP-LINK CPE210/220
-  DEVICE_PACKAGES := rssileds
-  BOARDNAME := CPE210
-  TPLINK_BOARD_NAME := CPE210
-endef
-
-define Device/wbs210
-$(Device/cpe510)
-  DEVICE_TITLE := TP-LINK WBS210
-  DEVICE_PACKAGES := rssileds
-  BOARDNAME := WBS210
-  TPLINK_BOARD_NAME := WBS210
-endef
-
-define Device/wbs510
-$(Device/cpe510)
-  DEVICE_TITLE := TP-LINK WBS510
-  DEVICE_PACKAGES := rssileds
-  BOARDNAME := WBS510
-  TPLINK_BOARD_NAME := WBS510
-endef
-TARGET_DEVICES += cpe210-220 cpe510 wbs210 wbs51
-
+TARGET_DEVICES += cpe510
 
 define Device/tl-wr941hp-v2
     $(Device/tplink-8mlzma)
