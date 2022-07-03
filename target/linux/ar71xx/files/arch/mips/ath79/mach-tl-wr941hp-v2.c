@@ -214,7 +214,7 @@ static void __init tl_wr941hp_v2_setup(void)
 
 	ath79_register_wmac(art + TL_WR941HP_V2_WMAC_CALDATA_OFFSET, NULL);
 
-	ath79_setup_qca956x_phy4_switch(true, true);
+	ath79_switch_data.phy4_mii_en = 1;
 
 	ath79_register_mdio(0, 0x0);
 	ath79_register_mdio(1, 0x0);
