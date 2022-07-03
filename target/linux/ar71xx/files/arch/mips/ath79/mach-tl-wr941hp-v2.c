@@ -202,35 +202,6 @@ static struct gpio_keys_button tl_wr941hp_v2_gpio_keys[] __initdata = {
 	},
 };
 
-static void __init tl_wr941hp_v2_gpio_led_setup(void)
-{
-#ifdef CONFIG_ATH79_DEV_LEDS_GPIO_SN74HC164
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_CLR, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_CLK, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_DATA, true);
-#else
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_PWR, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_WPS, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_LAN, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_WAN1, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_WAN2, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_WIFI2G, true);
-	ath79_gpio_direction_select(TL_WR941HP_V2_GPIO_LED_RE, true);
-#endif
-
-#ifdef CONFIG_ATH79_DEV_LEDS_GPIO_SN74HC164
-	ath79_register_sn74hc164_leds_gpio(ARRAY_SIZE(tl_wr941hp_v2_leds_gpio), tl_wr941hp_v2_leds_gpio);
-	ath79_register_sn74hc164_leds_dev(-1, ARRAY_SIZE(tl_wr941hp_v2_leds_dev),
-			tl_wr941hp_v2_leds_dev);
-#else
-	ath79_register_leds_gpio(-1, ARRAY_SIZE(tl_wr941hp_v2_leds_gpio),
-			tl_wr941hp_v2_leds_gpio);
-#endif
-	ath79_register_gpio_keys_polled(-1, TL_WR941HP_V2_KEYS_POLL_INTERVAL,
-			ARRAY_SIZE(tl_wr941hp_v2_gpio_keys),
-			tl_wr941hp_v2_gpio_keys);
-}
-
 static void __init tl_wr941hp_v2_setup(void)
 {
 	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
