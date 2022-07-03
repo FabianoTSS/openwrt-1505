@@ -269,5 +269,5 @@ static void __init tl_wr941hp_v2_setup(void)
 	ath79_switch_data.phy4_mii_en = 1;
 }
 
-MIPS_MACHINE(ATH79_MACH_TL_WR941HP_V2, "WR941HP", "TP-LINK TL WR941HP",
+MIPS_MACHINE(ATH79_MACH_TL_WR941HP_V2, "TL-WR941HP-v2", "TP-LINK TL-WR941HP/v2",
 	     tl_wr941hp_v2_setup);
