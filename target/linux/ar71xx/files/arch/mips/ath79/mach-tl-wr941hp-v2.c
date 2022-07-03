@@ -47,6 +47,7 @@
 #define TL_WR941HP_V2_WMAC_CALDATA_OFFSET       0x1000
 
 #ifdef CONFIG_ATH79_DEV_LEDS_GPIO_SN74HC164
+/*
 static struct led_gpio_set tl_wr941hp_v2_leds_gpio[] __initdata = {
 	{
 		.name		= "CLR",
@@ -166,7 +167,7 @@ static struct gpio_led tl_wr941hp_v2_leds_gpio[] __initdata = {
 	},
 };
 #endif
-
+*/
 static struct gpio_keys_button tl_wr941hp_v2_gpio_keys[] __initdata = {
 	{
 		.desc		= "RE button",
