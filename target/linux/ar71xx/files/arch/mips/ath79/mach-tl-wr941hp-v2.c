@@ -208,8 +208,6 @@ static void __init tl_wr941hp_v2_setup(void)
 
 	ath79_register_m25p80(NULL);
 
-	tl_wr941hp_v2_gpio_led_setup();
-
 	ath79_register_usb();
 	ath79_register_pci();
 
