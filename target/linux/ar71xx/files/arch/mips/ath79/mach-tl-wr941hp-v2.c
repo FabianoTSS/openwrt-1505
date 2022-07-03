@@ -20,7 +20,7 @@
 #include "dev-spi.h"
 #include "dev-usb.h"
 #include "dev-wmac.h"
-
+/*
 #ifdef CONFIG_ATH79_DEV_LEDS_GPIO_SN74HC164
 #define TL_WR941HP_V2_GPIO_LED_CLR              19
 #define TL_WR941HP_V2_GPIO_LED_CLK              2
@@ -40,15 +40,16 @@
 #define TL_WR941HP_V2_GPIO_BTN_WPS              4
 #define TL_WR941HP_V2_GPIO_BTN_WIFIONOFF        2
 #define TL_WR941HP_V2_GPIO_BTN_RESET            1
+*/
+//#define TL_WR941HP_V2_KEYS_POLL_INTERVAL        20   */  /* msecs */
+//#define TL_WR941HP_V2_KEYS_DEBOUNCE_INTERVAL    (3 * TL_WR941HP_V2_KEYS_POLL_INTERVAL)
 
-#define TL_WR941HP_V2_KEYS_POLL_INTERVAL        20     /* msecs */
-#define TL_WR941HP_V2_KEYS_DEBOUNCE_INTERVAL    (3 * TL_WR941HP_V2_KEYS_POLL_INTERVAL)
 
 #define TL_WR941HP_V2_MAC0_OFFSET               0
 #define TL_WR941HP_V2_MAC1_OFFSET               6
 #define TL_WR941HP_V2_WMAC_CALDATA_OFFSET       0x1000
 
-#ifdef CONFIG_ATH79_DEV_LEDS_GPIO_SN74HC164
+//#ifdef CONFIG_ATH79_DEV_LEDS_GPIO_SN74HC164
 /*
 static struct led_gpio_set tl_wr941hp_v2_leds_gpio[] __initdata = {
 	{
