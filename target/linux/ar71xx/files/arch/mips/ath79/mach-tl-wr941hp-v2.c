@@ -167,7 +167,7 @@ static struct gpio_led tl_wr941hp_v2_leds_gpio[] __initdata = {
 	},
 };
 #endif
-*/
+
 static struct gpio_keys_button tl_wr941hp_v2_gpio_keys[] __initdata = {
 	{
 		.desc		= "RE button",
@@ -202,7 +202,7 @@ static struct gpio_keys_button tl_wr941hp_v2_gpio_keys[] __initdata = {
 		.active_low	= 1,
 	},
 };
-
+*/
 static void __init tl_wr941hp_v2_setup(void)
 {
 	u8 *art = (u8 *) KSEG1ADDR(0x1fff0000);
