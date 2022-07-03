@@ -10,11 +10,13 @@
 #include "pci.h"
 #include "dev-eth.h"
 #include "dev-gpio-buttons.h"
+/*
 #ifdef CONFIG_ATH79_DEV_LEDS_GPIO_SN74HC164
 #include "dev-leds-gpio-sn74hc164.h"
 #else
 #include "dev-leds-gpio.h"
 #endif
+*/
 #include "dev-spi.h"
 #include "dev-usb.h"
 #include "dev-wmac.h"
