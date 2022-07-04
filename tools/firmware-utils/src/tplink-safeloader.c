@@ -152,6 +152,7 @@ static struct device_info boards[] = {
 		.last_sysupgrade_partition = "file-system",
 	},
 
+		
 	/** Firmware layout for the CPE510/520 */
 	{
 		.id	= "CPE510",
@@ -182,6 +183,39 @@ static struct device_info boards[] = {
 			{"default-config", 0x7d0000, 0x10000},
 			{"log", 0x7e0000, 0x10000},
 			{"radio", 0x7f0000, 0x10000},
+			{NULL, 0, 0}
+		},
+
+		.first_sysupgrade_partition = "os-image",
+		.last_sysupgrade_partition = "file-system",
+	},
+	/** Firmware layout for the TL-WR941HP-V2 */
+	{
+		.id	= "TL-WR941HP-V2",
+		.vendor = "",
+		.support_list =
+			"SupportList:\n"
+			"{product_name:TL-WR941HP,product_ver:2.0.0,special_id:42520000}\n",
+		.support_trail = '\x00',
+
+		.partitions = {
+			{"fs-uboot", 0x00000, 0x10000},
+			{"file-system", 0x10000, 0x6C0000},
+			{"os-image", 0x6D0000, 0x110000},
+			{"default-mac", 0x7E0000, 0x00020},
+			{"pin", 0x7E0020, 0x00010},
+			{"support-list", 0x7E0030, 0x0006C},
+			{"rf-test", 0x7E009C, 0x02000},
+			{"soft-version", 0x7E00A0, 0x00200},
+			{"product-info", 0x7E02A0, 0x002A0},
+			{"partition-table", 0x7E0540, 0x00F00},
+			{"device-id", 0x7E1440, 0x00100},
+			{"profile", 0x7E1540, 0x00AC0},
+			{"default-config", 0x7E2000, 0x02000},
+			{"user-config", 0x7E4000, 0x04000},	
+			{"certificate", 0x7E8000, 0x04000},
+			{"qos-db", 0x7Ec000, 0x04000},
+			{"radio", 0x7F0000, 0x10000},
 			{NULL, 0, 0}
 		},
 
