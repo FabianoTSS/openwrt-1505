@@ -7,6 +7,9 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
 
+IMAGE_KERNEL = $(word 1,$^)
+IMAGE_ROOTFS = $(word 2,$^)
+
 IMAGE_PROFILE:=$(if $(PROFILE),$(PROFILE),Default)
 
 JFFS2_BLOCKSIZE = 64k 128k 256k
@@ -753,6 +756,8 @@ define Device/cpe510
   IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
   IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
 endef
+TARGET_DEVICES += cpe510
+
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
@@ -1653,9 +1658,6 @@ define Image/Build/TPLINK-LZMA/initramfs
 		-k $(KDIR_TMP)/vmlinux-initramfs-$(2).bin.lzma \
 		-o $(call imgname,$(1),$(2))-uImage.bin
 endef
-
-IMAGE_KERNEL = $(word 1,$^)
-IMAGE_ROOTFS = $(word 2,$^)
 
 define Build/tplink-safeloader
        -$(STAGING_DIR_HOST)/bin/tplink-safeloader \
