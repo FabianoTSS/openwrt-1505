@@ -753,16 +753,6 @@ define Device/cpe510
   IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
   IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
 endef
-TARGET_DEVICES += cpe510
-
-define Device/tl-wr941hp-v2
-    $(Device/tplink-8mlzma)
-    BOARDNAME := TL-WR941HP-v2
-    DEVICE_PROFILE := TLWR941HP
-    TPLINK_HWID := 0x09410007
-endef
-TARGET_DEVICES += tl-wr941hp-v2
-
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
@@ -1664,28 +1654,20 @@ define Image/Build/TPLINK-LZMA/initramfs
 		-o $(call imgname,$(1),$(2))-uImage.bin
 endef
 
+IMAGE_KERNEL = $(word 1,$^)
+IMAGE_ROOTFS = $(word 2,$^)
 
-Image/Build/TPLINK-SAFELOADER/loader = $(call Image/BuildLoaderPatched,$(1),elf,$(2) $(3))
-
-define Image/Build/TPLINK-SAFELOADER
-	[ -e "$(KDIR)/loader-$(2).elf" ]
-
-	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
-		-B $(5) \
-		-k $(KDIR)/loader-$(2).elf \
-		-r $(KDIR)/root.$(1) \
+define Build/tplink-safeloader
+       -$(STAGING_DIR_HOST)/bin/tplink-safeloader \
+		-B $(TPLINK_BOARD_NAME) \
 		-V $(REVISION) \
+		-k $(IMAGE_KERNEL) \
+		-r $@ \
+		-o $@.new \
 		-j \
-		-o $(call factoryname,$(1),$(2))
-	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
-		-B $(5) \
-		-k $(KDIR)/loader-$(2).elf \
-		-r $(KDIR)/root.$(1) \
-		-V $(REVISION) \
-		-j -S \
-		-o $(call sysupname,$(1),$(2))
+		$(wordlist 2,$(words $(1)),$(1)) \
+		$(if $(findstring sysupgrade,$(word 1,$(1))),-S) && mv $@.new $@ || rm -f $@
 endef
-
 
 define Image/Build/CyberTAN
 	echo -n '' > $(KDIR_TMP)/empty.bin
