@@ -632,6 +632,7 @@ define Device/tl-wr941hp-v2
   BOARDNAME := TL-WR941HP-V2
   TPLINK_BOARD_ID := TL-WR941HP-V2
   TPLINK_HWID := 0x09410007
+  IMAGE_SIZE := 7808k
   DEVICE_PROFILE := TLWR941HP
   MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
 endef
@@ -1676,6 +1677,10 @@ define Build/tplink-safeloader
 		-j \
 		$(wordlist 2,$(words $(1)),$(1)) \
 		$(if $(findstring sysupgrade,$(word 1,$(1))),-S) && mv $@.new $@ || rm -f $@
+endef
+
+define Build/append-metadata
+	$(if $(SUPPORTED_DEVICES),echo $(call metadata_json,$(SUPPORTED_DEVICES)) | fwtool -I - $@)
 endef
 
 define Image/Build/CyberTAN
