@@ -623,7 +623,7 @@ define Device/tl-wr941nd-v6
 endef
 
 define Device/tl-wr941hp-v2
-  KERNEL := kernel-bin | patch-cmdline | lzma | uImageArcher lzma
+  KERNEL := kernel-bin
   IMAGES := sysupgrade.bin factory.bin
   IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade | \
 	append-metadata | check-size $$$$(IMAGE_SIZE)
