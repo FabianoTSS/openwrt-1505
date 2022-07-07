@@ -148,8 +148,8 @@ static struct device_info boards[] = {
 			{NULL, 0, 0}
 		},
 
-		.first_sysupgrade_partition = "os-image",
-		.last_sysupgrade_partition = "file-system",
+		.first_sysupgrade_partition = "file-system",
+		.last_sysupgrade_partition = "os-image",
 	},
 
 	/** Firmware layout for the CPE210/220 */
