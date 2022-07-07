@@ -622,41 +622,21 @@ define Device/tl-wr941nd-v6
     TPLINK_HWID := 0x09410006
 endef
 
-#define Device/tl-wr941hp-v2
-#  KERNEL := kernel-bin
-#  IMAGES := sysupgrade.bin factory.bin
-#  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade | \
-#	append-metadata | check-size $$$$(IMAGE_SIZE)
-#  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
-#  DEVICE_TITLE := TP-LINK TL-WR941HP-v2
-#  BOARDNAME := TL-WR941HP-V2
-#  TPLINK_BOARD_ID := TL-WR941HP-V2
-#  TPLINK_HWID := 0x09410007
-#  IMAGE_SIZE := 8000k
-#  DEVICE_PROFILE := TLWR941HP
-#  MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
-#endef
-#TARGET_DEVICES += tl-wr941hp-v2
-
-#define Device/tplink
-#  TPLINK_HWREV := 0x1
-#  KERNEL := kernel-bin | patch-cmdline | lzma
-#  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | tplink-safeloader
-#  IMAGES := sysupgrade.bin factory.bin
-#  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
-#  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
-#endef
+define Device/tl-wr941hp
+  MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
+  IMAGE_SIZE := 8000k
+  DEVICE_PROFILE := TLWR941HP
+  IMAGES := sysupgrade.bin factory.bin
+  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
+  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
+endef
 
 define Device/tl-wr941hp-v2
-	$(Device/tplink)
-    BOARDNAME := TL-WR941HP-v2
-    DEVICE_PROFILE := TLWR941HP
-    TPLINK_HWID := 0x09410007
-    KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | tplink-safeloader
-    IMAGES := sysupgrade.bin factory.bin
-    IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
-    IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
-	MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
+  $(Device/tl-wr941hp)
+  DEVICE_TITLE := TP-LINK TL-WR941HP/V2
+  BOARDNAME := TL-WR941HP-V2
+  TPLINK_BOARD_ID := TL-WR941HP
+  KERNEL := kernel-bin | patch-cmdline | lzma
 endef
 TARGET_DEVICES += tl-wr941hp-v2
 
@@ -772,19 +752,26 @@ define Device/oolite
 endef
 TARGET_DEVICES += oolite
 
-define Device/cpe510
-  DEVICE_TITLE := TP-LINK CPE510/520
+define Device/cpexxx
   DEVICE_PACKAGES := rssileds
-  MTDPARTS := spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
+  MTDPARTS := spi0.0:128k(u-boot)ro,64k(partition-table)ro,64k(product-info)ro,1792k(kernel),5888k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
   IMAGE_SIZE := 7680k
-  BOARDNAME := CPE510
-  TPLINK_BOARD_NAME := CPE510
   DEVICE_PROFILE := CPE510
   LOADER_TYPE := elf
-  KERNEL := kernel-bin | patch-cmdline | lzma | loader-kernel
   IMAGES := sysupgrade.bin factory.bin
   IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
   IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
+endef
+
+define Device/cpe510
+  $(Device/cpexxx)
+  DEVICE_TITLE := TP-LINK CPE510/520 v1
+  BOARDNAME := CPE510
+  TPLINK_BOARD_ID := CPE510
+  LOADER_FLASH_OFFS := 0x43000
+  COMPILE := loader-$(1).elf
+  COMPILE/loader-$(1).elf := loader-okli-compile
+  KERNEL := kernel-bin | lzma | uImage lzma -M 0x4f4b4c49
 endef
 TARGET_DEVICES += cpe510
 
@@ -1691,8 +1678,6 @@ endef
 #####################################################################################################
 ##########################Script from: openwrt/include/image-commands.mk#############################
 #####################################################################################################
-# Build commands that can be called from Device/* templates
-
 IMAGE_KERNEL = $(word 1,$^)
 IMAGE_ROOTFS = $(word 2,$^)
 
@@ -1700,7 +1685,45 @@ define Build/uImage
 	mkimage -A $(LINUX_KARCH) \
 		-O linux -T kernel \
 		-C $(1) -a $(KERNEL_LOADADDR) -e $(if $(KERNEL_ENTRY),$(KERNEL_ENTRY),$(KERNEL_LOADADDR)) \
-		-n '$(if $(UIMAGE_NAME),$(UIMAGE_NAME),$(call toupper,$(LINUX_KARCH)) LEDE Linux-$(LINUX_VERSION))' -d $@ $@.new
+		-n '$(if $(UIMAGE_NAME),$(UIMAGE_NAME),$(call toupper,$(LINUX_KARCH)) $(VERSION_DIST) Linux-$(LINUX_VERSION))' -d $@ $@.new
+	mv $@.new $@
+endef
+
+define Build/buffalo-enc
+	$(eval product=$(word 1,$(1)))
+	$(eval version=$(word 2,$(1)))
+	$(eval args=$(wordlist 3,$(words $(1)),$(1)))
+	$(STAGING_DIR_HOST)/bin/buffalo-enc \
+		-p $(product) -v $(version) $(args) \
+		-i $@ -o $@.new
+	mv $@.new $@
+endef
+
+define Build/buffalo-enc-tag
+	$(call Build/buffalo-enc,'' '' -S 152 $(1))
+endef
+
+define Build/buffalo-tag-dhp
+	$(eval product=$(word 1,$(1)))
+	$(eval region=$(word 2,$(1)))
+	$(eval language=$(word 3,$(1)))
+	$(STAGING_DIR_HOST)/bin/buffalo-tag \
+		-d 0x01000000 -w 1 \
+		-a $(BUFFALO_TAG_PLATFORM) \
+		-v $(BUFFALO_TAG_VERSION) -m $(BUFFALO_TAG_MINOR) \
+		-b $(product) -p $(product) \
+		-r $(region) -r $(region) -l $(language) \
+		-I $@ -o $@.new
+	mv $@.new $@
+endef
+
+define Build/buffalo-dhp-image
+	$(STAGING_DIR_HOST)/bin/mkdhpimg $@ $@.new
+	mv $@.new $@
+endef
+
+define Build/eva-image
+	$(STAGING_DIR_HOST)/bin/lzma2eva $(KERNEL_LOADADDR) $(KERNEL_LOADADDR) $@ $@.new
 	mv $@.new $@
 endef
 
@@ -1709,22 +1732,45 @@ define Build/netgear-chk
 		-o $@.new \
 		-k $@ \
 		-b $(NETGEAR_BOARD_ID) \
-		-r $(NETGEAR_REGION)
+		$(if $(NETGEAR_REGION),-r $(NETGEAR_REGION),)
 	mv $@.new $@
 endef
 
 define Build/netgear-dni
 	$(STAGING_DIR_HOST)/bin/mkdniimg \
-		-B $(NETGEAR_BOARD_ID) -v LEDE.$(REVISION) \
+		-B $(NETGEAR_BOARD_ID) -v $(VERSION_DIST).$(firstword $(subst -, ,$(REVISION))) \
 		$(if $(NETGEAR_HW_ID),-H $(NETGEAR_HW_ID)) \
 		-r "$(1)" \
 		-i $@ -o $@.new
 	mv $@.new $@
 endef
 
+define Build/append-squashfs-fakeroot-be
+	rm -rf $@.fakefs $@.fakesquashfs
+	mkdir $@.fakefs
+	$(STAGING_DIR_HOST)/bin/mksquashfs-lzma \
+		$@.fakefs $@.fakesquashfs \
+		-noappend -root-owned -be -nopad -b 65536 \
+		$(if $(SOURCE_DATE_EPOCH),-fixed-time $(SOURCE_DATE_EPOCH))
+	cat $@.fakesquashfs >> $@
+endef
+
+# append a fake/empty uImage header, to fool bootloaders rootfs integrity check
+# for example
+define Build/append-uImage-fakehdr
+	touch $@.fakehdr
+	$(STAGING_DIR_HOST)/bin/mkimage \
+		-A $(LINUX_KARCH) -O linux -T $(1) -C none \
+		-n '$(VERSION_DIST) fake $(1)' \
+		-d $@.fakehdr \
+		-s \
+		$@.fakehdr
+	cat $@.fakehdr >> $@
+endef
+
 define Build/tplink-safeloader
        -$(STAGING_DIR_HOST)/bin/tplink-safeloader \
-		-B $(TPLINK_BOARD_NAME) \
+		-B $(TPLINK_BOARD_ID) \
 		-V $(REVISION) \
 		-k $(IMAGE_KERNEL) \
 		-r $@ \
@@ -1735,8 +1781,7 @@ define Build/tplink-safeloader
 endef
 
 define Build/append-dtb
-	$(call Image/BuildDTB,$(if $(DEVICE_DTS_DIR),$(DEVICE_DTS_DIR),$(DTS_DIR))/$(DEVICE_DTS).dts,$@.dtb)
-	cat $@.dtb >> $@
+	cat $(KDIR)/image-$(firstword $(DEVICE_DTS)).dtb >> $@
 endef
 
 define Build/install-dtb
@@ -1752,6 +1797,7 @@ define Build/fit
 		-D $(DEVICE_NAME) -o $@.its -k $@ \
 		$(if $(word 2,$(1)),-d $(word 2,$(1))) -C $(word 1,$(1)) \
 		-a $(KERNEL_LOADADDR) -e $(if $(KERNEL_ENTRY),$(KERNEL_ENTRY),$(KERNEL_LOADADDR)) \
+		-c $(if $(DEVICE_DTS_CONFIG),$(DEVICE_DTS_CONFIG),"config@1") \
 		-A $(LINUX_KARCH) -v $(LINUX_VERSION)
 	PATH=$(LINUX_DIR)/scripts/dtc:$(PATH) mkimage -f $@.its $@.new
 	@mv $@.new $@
@@ -1767,7 +1813,7 @@ define Build/lzma-no-dict
 endef
 
 define Build/gzip
-	gzip -9n -c $@ $(1) > $@.new
+	gzip -f -9n -c $@ $(1) > $@.new
 	@mv $@.new $@
 endef
 
@@ -1818,6 +1864,10 @@ define Build/append-ubi
 	rm $@.tmp
 endef
 
+define Build/append-uboot
+	dd if=$(UBOOT_PATH) >> $@
+endef
+
 define Build/pad-to
 	dd if=$@ of=$@.new bs=$(1) conv=sync
 	mv $@.new $@
@@ -1858,12 +1908,54 @@ define Build/combined-image
 	@mv $@.new $@
 endef
 
+define Build/openmesh-image
+	$(TOPDIR)/scripts/om-fwupgradecfg-gen.sh \
+		"$(call param_get_default,ce_type,$(1),$(DEVICE_NAME))" \
+		"$@-fwupgrade.cfg" \
+		"$(call param_get_default,kernel,$(1),$(IMAGE_KERNEL))" \
+		"$(call param_get_default,rootfs,$(1),$@)"
+	$(TOPDIR)/scripts/combined-ext-image.sh \
+		"$(call param_get_default,ce_type,$(1),$(DEVICE_NAME))" "$@" \
+		"$@-fwupgrade.cfg" "fwupgrade.cfg" \
+		"$(call param_get_default,kernel,$(1),$(IMAGE_KERNEL))" "kernel" \
+		"$(call param_get_default,rootfs,$(1),$@)" "rootfs"
+endef
+
 define Build/sysupgrade-tar
 	sh $(TOPDIR)/scripts/sysupgrade-tar.sh \
 		--board $(if $(BOARD_NAME),$(BOARD_NAME),$(DEVICE_NAME)) \
 		--kernel $(call param_get_default,kernel,$(1),$(IMAGE_KERNEL)) \
 		--rootfs $(call param_get_default,rootfs,$(1),$(IMAGE_ROOTFS)) \
 		$@
+endef
+
+define Build/tplink-v1-header
+	$(STAGING_DIR_HOST)/bin/mktplinkfw \
+		-c -H $(TPLINK_HWID) -W $(TPLINK_HWREV) -L $(KERNEL_LOADADDR) \
+		-E $(if $(KERNEL_ENTRY),$(KERNEL_ENTRY),$(KERNEL_LOADADDR)) \
+		-m $(TPLINK_HEADER_VERSION) -N "$(VERSION_DIST)" -V $(REVISION) \
+		-k $@ -o $@.new $(1)
+	@mv $@.new $@
+endef
+
+define Build/tplink-v2-header
+	$(STAGING_DIR_HOST)/bin/mktplinkfw2 \
+		-c -H $(TPLINK_HWID) -W $(TPLINK_HWREV) -L $(KERNEL_LOADADDR) \
+		-E $(if $(KERNEL_ENTRY),$(KERNEL_ENTRY),$(KERNEL_LOADADDR))  \
+		-w $(TPLINK_HWREVADD) -F "$(TPLINK_FLASHLAYOUT)" \
+		-T $(TPLINK_HVERSION) -V "ver. 2.0" \
+		-k $@ -o $@.new $(1)
+	@mv $@.new $@
+endef
+
+define Build/tplink-v2-image
+	$(STAGING_DIR_HOST)/bin/mktplinkfw2 \
+		-H $(TPLINK_HWID) -W $(TPLINK_HWREV) \
+		-w $(TPLINK_HWREVADD) -F "$(TPLINK_FLASHLAYOUT)" \
+		-T $(TPLINK_HVERSION) -V "ver. 2.0" -a 0x4 -j \
+		-k $(IMAGE_KERNEL) -r $(IMAGE_ROOTFS) -o $@.new $(1)
+	cat $@.new >> $@
+	rm -rf $@.new
 endef
 
 json_quote=$(subst ','\'',$(subst ",\",$(1)))
@@ -1881,14 +1973,13 @@ metadata_json = \
 	}'
 
 define Build/append-metadata
-	$(if $(SUPPORTED_DEVICES),echo $(call metadata_json,$(SUPPORTED_DEVICES)) | fwtool -I - $@)
+	$(if $(SUPPORTED_DEVICES),-echo $(call metadata_json,$(SUPPORTED_DEVICES)) | fwtool -I - $@)
 endef
 
 define Build/kernel2minor
 	kernel2minor -k $@ -r $@.new $(1)
 	mv $@.new $@
 endef
-
 #####################################################################################################
 ##ENDS HERE
 #####################################################################################################
