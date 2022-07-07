@@ -638,11 +638,25 @@ endef
 #endef
 #TARGET_DEVICES += tl-wr941hp-v2
 
+#define Device/tplink
+#  TPLINK_HWREV := 0x1
+#  KERNEL := kernel-bin | patch-cmdline | lzma
+#  KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | tplink-safeloader
+#  IMAGES := sysupgrade.bin factory.bin
+#  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
+#  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
+#endef
+
 define Device/tl-wr941hp-v2
-    $(Device/tplink-8mlzma)
+	$(Device/tplink)
     BOARDNAME := TL-WR941HP-v2
     DEVICE_PROFILE := TLWR941HP
     TPLINK_HWID := 0x09410007
+    KERNEL_INITRAMFS := kernel-bin | patch-cmdline | lzma | tplink-safeloader
+    IMAGES := sysupgrade.bin factory.bin
+    IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
+    IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
+	MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
 endef
 TARGET_DEVICES += tl-wr941hp-v2
 
