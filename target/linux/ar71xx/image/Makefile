@@ -622,21 +622,21 @@ define Device/tl-wr941nd-v6
     TPLINK_HWID := 0x09410006
 endef
 
-define Device/tl-wr941hp-v2
-  KERNEL := kernel-bin
-  IMAGES := sysupgrade.bin factory.bin
-  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade | \
-	append-metadata | check-size $$$$(IMAGE_SIZE)
-  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
-  DEVICE_TITLE := TP-LINK TL-WR941HP-v2
-  BOARDNAME := TL-WR941HP-V2
-  TPLINK_BOARD_ID := TL-WR941HP-V2
-  TPLINK_HWID := 0x09410007
-  IMAGE_SIZE := 7808k
-  DEVICE_PROFILE := TLWR941HP
-  MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
-endef
-TARGET_DEVICES += tl-wr941hp-v2
+#define Device/tl-wr941hp-v2
+#  KERNEL := kernel-bin
+#  IMAGES := sysupgrade.bin factory.bin
+#  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade | \
+#	append-metadata | check-size $$$$(IMAGE_SIZE)
+#  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
+#  DEVICE_TITLE := TP-LINK TL-WR941HP-v2
+#  BOARDNAME := TL-WR941HP-V2
+#  TPLINK_BOARD_ID := TL-WR941HP-V2
+#  TPLINK_HWID := 0x09410007
+#  IMAGE_SIZE := 8000k
+#  DEVICE_PROFILE := TLWR941HP
+#  MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
+#endef
+#TARGET_DEVICES += tl-wr941hp-v2
 
 # Chinese version (unlike European) is similar to the TL-WDR3500
 define Device/tl-d-v6-cn
@@ -765,7 +765,6 @@ define Device/cpe510
   IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
 endef
 TARGET_DEVICES += cpe510
-
 
 rootfs_type=$(patsubst jffs2-%,jffs2,$(patsubst squashfs-%,squashfs,$(1)))
 
