@@ -123,8 +123,8 @@ static struct device_info boards[] = {
 		.id	= "TL-WR941HP",
 		.vendor = "",
 		.support_list =
-			"SupportList:\n"
-			"{product_name:TL-WR941HP,product_ver:2.0.0,special_id:42520000}\n",
+			"SupportList:\r\n"
+			"{product_name:TL-WR941HP,product_ver:2.0.0,special_id:42520000}\r\n",
 		.support_trail = '\x00',
 
 		.partitions = {
