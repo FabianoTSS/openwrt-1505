@@ -6,6 +6,7 @@
 #
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
+include $(INCLUDE_DIR)/image-commands.mk
 
 IMAGE_PROFILE:=$(if $(PROFILE),$(PROFILE),Default)
 
@@ -619,8 +620,26 @@ define Device/tl-wr941nd-v6
     TPLINK_HWID := 0x09410006
 endef
 
+define Device/tl-wr941hp
+  MTDPARTS := spi0.0:64k(u-boot)ro,6912k(rootfs),1088k(kernel),64k(mib0),64k(art),8000k@0x10000(firmware)
+  IMAGE_SIZE := 8000k
+  DEVICE_PROFILE := TLWR941HP
+  IMAGES := sysupgrade.bin factory.bin
+  IMAGE/sysupgrade.bin := append-rootfs | tplink-safeloader sysupgrade
+  IMAGE/factory.bin := append-rootfs | tplink-safeloader factory
+endef
+
+define Device/tl-wr941hp-v2
+  $(Device/tl-wr941hp)
+  DEVICE_TITLE := TP-LINK TL-WR941HP/V2
+  BOARDNAME := TL-WR941HP-V2
+  TPLINK_BOARD_ID := TL-WR941HP
+  KERNEL := kernel-bin | patch-cmdline | lzma
+endef
+TARGET_DEVICES += tl-wr941hp-v2
+
 # Chinese version (unlike European) is similar to the TL-WDR3500
-define Device/tl-wr941nd-v6-cn
+define Device/tl-d-v6-cn
     $(Device/tplink-4mlzma)
     BOARDNAME := TL-WDR3500
     DEVICE_PROFILE := TLWR941
@@ -1019,7 +1038,6 @@ cameo_ap123_mtdlayout_4M=mtdparts=spi0.0:64k(u-boot)ro,64k(nvram)ro,3712k(firmwa
 cameo_db120_mtdlayout=mtdparts=spi0.0:64k(uboot)ro,64k(nvram)ro,15936k(firmware),192k(lang)ro,64k(mac)ro,64k(art)ro
 cameo_db120_mtdlayout_8M=mtdparts=spi0.0:64k(uboot)ro,64k(nvram)ro,7872k(firmware),128k(lang)ro,64k(art)ro
 cap4200ag_mtdlayout=mtdparts=spi0.0:256k(u-boot),64k(u-boot-env),320k(custom)ro,1536k(kernel),12096k(rootfs),2048k(failsafe),64k(art),13632k@0xa0000(firmware)
-cpe510_mtdlayout=mtdparts=spi0.0:128k(u-boot)ro,64k(pation-table)ro,64k(product-info)ro,1536k(kernel),6144k(rootfs),192k(config)ro,64k(ART)ro,7680k@0x40000(firmware)
 eap300v2_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env),320k(custom),13632k(firmware),2048k(failsafe),64k(art)ro
 db120_mtdlayout=mtdparts=spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,6336k(rootfs),1408k(kernel),64k(nvram),64k(art)ro,7744k@0x50000(firmware)
 dgl_5500_mtdlayout=mtdparts=spi0.0:192k(u-boot)ro,64k(nvram)ro,15296k(firmware),192k(lang)ro,512k(my-dlink)ro,64k(mac)ro,64k(art)ro
@@ -1632,29 +1650,6 @@ define Image/Build/TPLINK-LZMA/initramfs
 		-o $(call imgname,$(1),$(2))-uImage.bin
 endef
 
-
-Image/Build/TPLINK-SAFELOADER/loader = $(call Image/BuildLoaderPatched,$(1),elf,$(2) $(3))
-
-define Image/Build/TPLINK-SAFELOADER
-	[ -e "$(KDIR)/loader-$(2).elf" ]
-
-	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
-		-B $(5) \
-		-k $(KDIR)/loader-$(2).elf \
-		-r $(KDIR)/root.$(1) \
-		-V $(REVISION) \
-		-j \
-		-o $(call factoryname,$(1),$(2))
-	-$(STAGING_DIR_HOST)/bin/tplink-safeloader \
-		-B $(5) \
-		-k $(KDIR)/loader-$(2).elf \
-		-r $(KDIR)/root.$(1) \
-		-V $(REVISION) \
-		-j -S \
-		-o $(call sysupname,$(1),$(2))
-endef
-
-
 define Image/Build/CyberTAN
 	echo -n '' > $(KDIR_TMP)/empty.bin
 	$(STAGING_DIR_HOST)/bin/trx -o $(KDIR)/image.tmp \
@@ -2067,9 +2062,6 @@ $(eval $(call SingleProfile,TPLINK,64kraw,TLWR1043V1,tl-wr1043nd-v1,TL-WR1043ND,
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V2,tl-wr1043nd-v2,TL-WR1043ND-v2,ttyS0,115200,0x10430002,1,8M))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR1043V3,tl-wr1043nd-v3,TL-WR1043ND-v2,ttyS0,115200,0x10430003,1,8M))
 $(eval $(call SingleProfile,TPLINK-LZMA,64kraw,TLWR2543,tl-wr2543-v1,TL-WR2543N,ttyS0,115200,0x25430001,1,8Mlzma,-v 3.13.99))
-
-$(eval $(call SingleProfile,TPLINK-SAFELOADER,64kraw,CPE510,cpe210-220-510-520,CPE510,ttyS0,115200,$$(cpe510_mtdlayout),CPE510))
-
 $(eval $(call SingleProfile,UAPPRO,64k,UAPPRO,ubnt-uap-pro,UAP-PRO,ttyS0,115200,BZ,BZ,ar934x))
 $(eval $(call SingleProfile,UAPPRO,64k,UBNTUNIFIOUTDOORPLUS,ubnt-unifi-outdoor-plus,UBNT-UOP,ttyS0,115200,BZ,BZ,ar7240))
 
